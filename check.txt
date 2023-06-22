@@ -1,0 +1,946 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<time.h>
+#include<windows.h>
+
+void gotoxy(int x, int y)
+{
+  static HANDLE h = NULL;
+  if(!h)
+    h = GetStdHandle(STD_OUTPUT_HANDLE);
+  COORD c = { x, y };
+  SetConsoleCursorPosition(h,c);
+}
+int x,y;
+void Authority(void);
+void Customer(void);
+void change_password(void);
+void registration(void);
+void login1(void);
+void login(void);
+void orderFood(void);
+int i = 0, noAccnt = 0;
+
+
+void login(void)//---------------------------------------------------Customer login system
+{
+    system("CLS");
+    int value, choice, userLineNum = 0, passLineNum = 0;
+    char str1[50], str2[50], str3[50], str4[50], ch[2];
+    FILE *usernames = fopen("usernames.txt", "r");
+
+    if(usernames == NULL)
+    {
+        noAccnt = 1;
+        registration();
+    }
+
+    system("CLS");
+    int x,y,time = 1000;
+    for(x=20; x<=70; x++)
+        {
+            usleep(time);
+            gotoxy(x,3);
+            printf("*");
+            printf("      Welcome to Log in process   ");
+            fflush(stdout);
+        }
+    for(x=110; x<=150; x++)
+        {
+            usleep(time);
+            gotoxy(x,3);
+            printf("*");
+            fflush(stdout);
+        }
+    printf("\n\n\n");
+
+    printf("                    Please enter your username: ");
+    scanf("%s", str1);
+
+    while(!feof(usernames))   //searching for user name.....
+    {
+        userLineNum++;
+        fscanf(usernames, "%s", str2);
+
+
+        value = strcmp(str1, str2);
+
+        if(value == 0)
+            break;
+    }
+
+    if(value == 0)
+        {
+            fclose(usernames);
+            FILE *passwords = fopen("passwords.txt", "r");
+
+            printf("\n                    Please enter your password: ");
+            scanf("%s", str3);
+            printf("\n\n");
+
+            passLineNum = 0;
+            while(!feof(passwords))   //searching for password.....
+            {
+                if(feof(passwords))
+                {
+                    break;
+                }
+                passLineNum++;
+                fscanf(usernames, "%s", str4);
+                if(passLineNum == userLineNum)
+                {
+                    value = strcmp(str3, str4);
+                    if(value == 0)
+                        break;
+                }
+            }
+            if(value == 0)
+            {
+                system("CLS");
+                int x,y,time = 1000;
+                for(x=20; x<=70; x++)
+                {
+                    usleep(time);
+                    gotoxy(x,3);
+                    printf("*");
+                    printf("       log in successful       ");
+                    fflush(stdout);
+                }
+                for(x=100; x<=150; x++)
+                {
+                    usleep(time);
+                    gotoxy(x,3);
+                    printf("*");
+                    fflush(stdout);
+                }
+                printf("\n\n\n\n");
+                printf("\t\t\t\t                    MENU: \n");
+                printf("\t\t\t\t                    ----\n\n");
+                printf("\t\t\t\t                          1. Order food from The Cherry Blossom restaurent.\n\n");
+                printf("\t\t\t\t                          2. Exit.\n\n");
+                printf("\t\t\t\t            Your choice:  ");
+                scanf("%d", &choice);
+
+                switch(choice)
+                {
+                    case 1: orderFood();break;
+                    case 2: exit(1);break;
+                    default: printf("\n\n\t\t\t********* Sorry, there is no such option. Please restart the program to continue ********\n\n");
+                }
+
+            }
+           else
+            {
+                fclose(passwords);
+                int x,y,time = 10000;
+                for(x=20; x<=70; x++)
+                {
+                    usleep(time);
+                    gotoxy(x,20);
+                    printf("*");
+                    printf("\n\n\t\t\t\t     *************** Wrong Password *************      ");
+                    fflush(stdout);
+                }
+                for(x=100; x<=150; x++)
+                {
+                    usleep(time);
+                    gotoxy(x,20);
+                    printf("*");
+                    fflush(stdout);
+                }
+                printf("\n\n                    Please select one:\n                    -----------------\n                                       1. Try again\n\n                                       2. Exit\n\n");
+                printf("                               choice: ");
+                scanf("%d", &choice);
+                system("CLS");
+
+                switch(choice)
+                {
+                    case 1:login();break;
+                    case 2:exit(1);break;
+                }
+             }
+
+
+            fclose(passwords);
+        }
+    else
+    {
+        fclose(usernames);
+        printf("\n\n\n\n");
+        printf("        *********Username doesn't match*********\n\n\n          Please select one\n          -----------------\n\n                  1. Try again\n\n                  2. Exit\n\n");
+        printf("            choice: ");
+        scanf("%d", &choice);
+        system("CLS");
+        switch(choice)
+        {
+            case 1:login();break;
+            case 2:exit(1);break;
+        }
+    }
+
+}
+
+
+void registration()//-----------------------------------------customer Registration process
+{
+    system("CLS");
+    char username[50], password[50], ch;
+
+    FILE *usernames = fopen("usernames.txt", "r");
+    FILE *passwords = fopen("passwords.txt", "r");
+
+    if(noAccnt == 1)
+    {
+        printf(" You don't have an account. Please register first.\n\n");
+    }
+
+    system("CLS");
+    int x,y,time = 1000;
+    for(x=10; x<=60; x++)
+        {
+            usleep(time);
+            gotoxy(x,3);
+            printf("*");
+            printf("      Welcome to the registration process        ");
+            fflush(stdout);
+        }
+    for(x=110; x<=160; x++)
+        {
+            usleep(time);
+            gotoxy(x,3);
+            printf("*");
+            fflush(stdout);
+        }
+    printf("\n\n");
+
+    if(usernames == NULL)
+    {
+        fclose(usernames);
+        fclose(passwords);
+
+        FILE *usernames = fopen("usernames.txt", "w");
+        FILE *passwords = fopen("passwords.txt", "w");
+
+        printf(" please select an username without any space: ");
+        //ch = getchar();
+        //printf("%c", ch);
+        //gets(st[i].username);
+        scanf("%s", username);
+
+        printf(" Give a password: ");
+        //ch = getchar();
+        //gets(st[i].password);
+        scanf("%s", password);
+
+
+        fputs(username, usernames);
+
+        fputs(password, passwords);
+
+        fclose(usernames);
+        fclose(passwords);
+
+    }
+    else
+    {
+        fclose(usernames);
+        fclose(passwords);
+
+        FILE *usernames = fopen("usernames.txt", "a");
+        FILE *passwords = fopen("passwords.txt", "a");
+
+        printf("          Please select an username without any space: ");
+        scanf("%s", username);
+        printf("\n");
+        printf("                                      Give a password: ");
+        scanf("%s", password);
+
+
+        fprintf(usernames, "\n");
+        fputs(username, usernames);
+
+
+        fprintf(passwords, "\n");
+        fputs(password, passwords);
+
+        fclose(usernames);
+        fclose(passwords);
+    }
+
+
+
+    login();
+}
+
+void orderFood(void)
+{
+    system("CLS");
+    char ch;
+    int choice, qnt[40], orderedItem[40];
+    double fdPrice[20] = {0, 250, 250, 450, 150, 25, 400, 70, 40, 25, 40};
+    double total = 0;
+
+
+    int x,y,time = 1000;
+    for(x=10; x<=70; x++)
+        {
+            usleep(time);
+            gotoxy(x,3);
+            printf("*");
+            printf("         Welcome       ");
+            fflush(stdout);
+        }
+    for(x=100; x<=160; x++)
+        {
+            usleep(time);
+            gotoxy(x,3);
+            printf("*");
+            fflush(stdout);
+        }
+    printf("\n\n");
+    printf(" \t\t\t\tMENU:\n");
+    printf(" \t\t\t\t....\n\n");
+    printf(" \t\t\t\t\t1 .  Beef burger         %.2f TK\n", fdPrice[1]);
+    printf(" \t\t\t\t\t2 .  Chicken burger      %.2f TK\n", fdPrice[2]);
+    printf(" \t\t\t\t\t3 .  Chicken pizza       %.2f TK\n", fdPrice[3]);
+    printf(" \t\t\t\t\t4 .  Fried chicken       %.2f TK\n", fdPrice[4]);
+    printf(" \t\t\t\t\t5 .  Chicken nuggets     %.2f TK\n", fdPrice[5]);
+    printf(" \t\t\t\t\t6 .  The soup            %.2f TK\n", fdPrice[6]);
+    printf(" \t\t\t\t\t7 .  Coffee              %.2f TK\n", fdPrice[7]);
+    printf(" \t\t\t\t\t8 .  Tea                 %.2f TK\n", fdPrice[8]);
+    printf(" \t\t\t\t\t9 .  Water               %.2f TK\n", fdPrice[9]);
+    printf(" \t\t\t\t\t10.  Juice               %.2f TK\n", fdPrice[10]);
+
+
+    int j = 1;
+    int iterate = 1;
+
+    printf("\n\n\n\t\t\t\t\t  What do you like to have?");
+    while(1)
+    {
+        printf("\n\n\t\t  Please enter any number from 1 to 10 to choose your item: ");
+        scanf(" %d", &orderedItem[j]);
+        printf("\n\t\t  Please enter quantity:\t\t\t\t    ");
+        scanf(" %d", &qnt[j]);
+        fdPrice[orderedItem[j]] *= qnt[j];
+        printf("\n\n\t\t  Enter 1 to order more . Enter any to get billed:\t    ");
+        scanf("%d", &choice);
+
+        if(choice != 1)
+            break;
+
+        iterate++;
+        j++;
+    }
+    printf("\n\n\n");
+    printf(" \t\t\t\t\t-------------------------------------------------------------------------------\n");
+    printf(" \t\t\t\t\t                                 BILL                        \n");
+    printf(" \t\t\t\t\t                                 ----                        \n\n");
+
+    for(j=1; j<=40; j++)
+    {
+        switch(orderedItem[j])
+        {
+            case 1 : printf("\t\t\t\t\t    Beef burger               ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[1]); break;
+            case 2 : printf("\t\t\t\t\t    Chicken burger            ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[2]); break;
+            case 3 : printf("\t\t\t\t\t    Cheese pizza              ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[3]); break;
+            case 4 : printf("\t\t\t\t\t    Fried chicken             ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[4]); break;
+            case 5 : printf("\t\t\t\t\t    Chicken nuggets           ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[5]); break;
+            case 6 : printf("\t\t\t\t\t    The soup                  ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[6]); break;
+            case 7 : printf("\t\t\t\t\t    Coffee                    ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[7]); break;
+            case 8 : printf("\t\t\t\t\t    Tea                       ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[8]); break;
+            case 9 : printf("\t\t\t\t\t    Water                     ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[9]); break;
+            case 10: printf("\t\t\t\t\t    Juice                     ||   %d   ||     %.2f TK\n",qnt[j], fdPrice[10]);break;
+        }
+        total += fdPrice[orderedItem[j]];
+
+        if(iterate == 1)
+            break;
+        iterate--;
+    }
+
+    printf("\n\t\t\t\t                                 Total: %.3f TK  \n\n", total);
+    printf(" \t\t\t\t\t-------------------------------------------------------------------------------\n");
+
+
+    printf("\n\n\t\t\t MENU:\n");
+    printf("     \t\t\t  ....\n\n");
+    printf(" \t\t\t\t\t1. Order food from The Cherry Blossom restaurent.\n");
+    printf(" \t\t\t\t\t2. Main page.\n");
+    printf(" \t\t\t\t\t3. Exit.\n\n");
+    printf(" \t\t\tYour choice: ");
+    scanf("%d", &choice);
+
+    switch(choice)
+    {
+        case 1: orderFood();break;
+        case 2: main();break;
+        case 3: exit(1);
+        default: printf("\n Sorry, there is no such option. Please restart the program to continue...\n\n");
+    }
+
+
+}
+
+
+
+
+int main(void)
+{
+    system("CLS");
+    system("COLOR 6");
+    int x,y,time = 1000;
+    int choice;
+    char ch;
+    for(x=15; x<=65; x++)
+    {
+        usleep(time);
+        gotoxy(x,3);
+        printf("*");
+        printf("  Welcome to  The Cherry Blossom restaurent  ");
+        fflush(stdout);
+    }
+    for(x=110; x<=150; x++)
+    {
+        usleep(time);
+        gotoxy(x,3);
+        printf("*");
+        fflush(stdout);
+    }
+    printf("\n\n");
+    printf("               Choose one option:\n               ------------------\n\n                                   1. Authority\n\n                                   2. Customer\n\n                                   3. Exit\n\n");
+    for(x=21; x<=32; x++)
+    {
+        usleep(time);
+        gotoxy(x,16);
+        printf("-");
+        fflush(stdout);
+        if(x==32)
+        {
+            gotoxy(21,15);
+            printf("Your choice:  ");
+            scanf("%d", &choice);
+        }
+    }
+
+
+    switch(choice)
+    {
+        case 1: Authority();break;
+        case 2: Customer();break;
+        case 3: exit(1);break;
+        default:
+            for(x=15; x<=45; x++)
+            {
+                usleep(time);
+                gotoxy(x,20);
+                printf("-");
+                printf("\n\n\t\t\t\t     ****** You typed wrong option. Please restart the program to continue *****");
+                fflush(stdout);
+            }
+            for(y=20; y>=19; y--)
+            {
+                usleep(time);
+                gotoxy(45,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=45; x<=116; x++)
+            {
+                usleep(time);
+                gotoxy(x,19);
+                printf("*");
+                fflush(stdout);
+            }
+            for(y=19; y<=21; y++)
+            {
+                usleep(time);
+                gotoxy(116,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=116; x>=45; x--)
+            {
+                usleep(time);
+                gotoxy(x,22);
+                printf("*");
+                fflush(stdout);
+            }
+            for(y=22; y>=20; y--)
+            {
+                usleep(time);
+                gotoxy(45,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=117; x<=150; x++)
+            {
+                usleep(time);
+                gotoxy(x,20);
+                printf("-");
+                fflush(stdout);
+            }
+            printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+    getchar();
+    return 0;
+}
+void Authority()                ///---------------------------------------------------------for authority
+{
+    system("CLS");
+    system("COLOR 4");
+    int x,y,time = 1000;
+    int choice;
+    char ch;
+    for(x=15; x<=65; x++)
+    {
+        usleep(time);
+        gotoxy(x,3);
+        printf("*");
+        printf("  Welcome to Authority page  ");
+        fflush(stdout);
+    }
+    for(x=100; x<=150; x++)
+    {
+        usleep(time);
+        gotoxy(x,3);
+        printf("*");
+        fflush(stdout);
+    }
+    printf("\n\n");
+    printf("               Choose one option:\n               ------------------\n\n                                   1. login\n\n                                   2. Exit\n\n");
+    for(x=21; x<=32; x++)
+    {
+        usleep(time);
+        gotoxy(x,16);
+        printf("-");
+        fflush(stdout);
+        if(x==32)
+        {
+            gotoxy(21,15);
+            printf("Your choice:  ");
+            scanf("%d", &choice);
+        }
+    }
+
+
+    switch(choice)
+    {
+        case 1: login1();break;
+        case 2: exit(1);break;
+        default:
+            for(x=15; x<=45; x++)
+            {
+                usleep(time);
+                gotoxy(x,20);
+                printf("-");
+                printf("\t\t\t\t    ********* You typed wrong option. Please restart the program to continue *********");
+                fflush(stdout);
+            }
+            for(y=20; y>=19; y--)
+            {
+                usleep(time);
+                gotoxy(45,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=45; x<=116; x++)
+            {
+                usleep(time);
+                gotoxy(x,19);
+                printf("*");
+                fflush(stdout);
+            }
+            for(y=19; y<=21; y++)
+            {
+                usleep(time);
+                gotoxy(116,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=116; x>=45; x--)
+            {
+                usleep(time);
+                gotoxy(x,22);
+                printf("*");
+                fflush(stdout);
+            }
+            for(y=22; y>=20; y--)
+            {
+                usleep(time);
+                gotoxy(45,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=117; x<=150; x++)
+            {
+                usleep(time);
+                gotoxy(x,20);
+                printf("-");
+                fflush(stdout);
+            }
+            printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+}
+void Customer()                             ///-------------------------------------------for customers
+{
+    system("CLS");
+    system("COLOR 2");
+    int x,y,time = 1000;
+    int choice;
+    char ch;
+    for(x=15; x<=60; x++)
+    {
+        usleep(time);
+        gotoxy(x,3);
+        printf("*");
+        printf("  Welcome to The Cherry Blossom restaurent  ");
+        fflush(stdout);
+    }
+    for(x=105; x<=150; x++)
+    {
+        usleep(time);
+        gotoxy(x,3);
+        printf("*");
+        fflush(stdout);
+    }
+    printf("\n\n");
+    printf("               Choose one option:\n               ------------------\n\n                                   1. login\n\n                                   2. Registration\n\n                                   3. Exit\n\n");
+    for(x=21; x<=32; x++)
+    {
+        usleep(time);
+        gotoxy(x,16);
+        printf("-");
+        fflush(stdout);
+        if(x==32)
+        {
+            gotoxy(21,15);
+            printf("Your choice:  ");
+            scanf("%d", &choice);
+        }
+    }
+
+
+    switch(choice)
+    {
+        case 1: login();break;
+        case 2: registration();break;
+        case 3: exit(1);break;
+        default:
+            for(x=15; x<=45; x++)
+            {
+                usleep(time);
+                gotoxy(x,20);
+                printf("-");
+                printf("     You typed wrong option. Please restart the program to continue ");
+                fflush(stdout);
+            }
+            for(y=20; y>=19; y--)
+            {
+                usleep(time);
+                gotoxy(45,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=45; x<=116; x++)
+            {
+                usleep(time);
+                gotoxy(x,19);
+                printf("*");
+                fflush(stdout);
+            }
+            for(y=19; y<=21; y++)
+            {
+                usleep(time);
+                gotoxy(116,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=116; x>=45; x--)
+            {
+                usleep(time);
+                gotoxy(x,22);
+                printf("*");
+                fflush(stdout);
+            }
+            for(y=22; y>=20; y--)
+            {
+                usleep(time);
+                gotoxy(45,y);
+                printf("*");
+                fflush(stdout);
+            }
+            for(x=117; x<=150; x++)
+            {
+                usleep(time);
+                gotoxy(x,20);
+                printf("-");
+                fflush(stdout);
+            }
+            printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    }
+}
+
+
+/*void update_password(void)
+{
+    int oldpass,newpass,n;
+
+
+    FILE *fpass;
+    fpass=fopen("oldpass.txt","r");
+    if(fpass==0)
+    {
+
+        fpass=fopen("oldpass.txt","w");
+        fprintf(fpass,"0\n");
+        fclose(fpass);
+    }
+    else
+    {
+
+        fscanf(fpass,"%d",&oldpass);
+        fclose(fpass);
+
+       scanf("%d",&newpass);
+       if(newpass>oldpass)
+        {
+          fpass=fopen("oldpass.txt","w");
+           fprintf(fpass,"%d",newpass);
+          fclose(fpass);
+
+        }
+    }
+}*/
+
+void login1(void){
+    int contFlag='y';
+    system("COLOR 9");
+    char adminname[20],adminpasswrd[20];
+    char username[20]= "admin";
+    char passwrd[20] = "password";
+    printf("\n\n\t\t\t\t\tEnter Admin name:\t\t" );
+    scanf("%s", adminname);
+    printf("\n\t\t\t\t\t Enter Admin passwrd:\t\t");
+    scanf("%s",adminpasswrd);
+
+    if((strcmp(adminname, username)==0) && (strcmp(adminpasswrd,passwrd)==0))
+    {
+        system("COLOR A");
+        struct items
+            {
+                char item[20];
+                float price;
+                int qty;
+            };
+
+            struct orders
+            {
+                char customer[50];
+                char date[50];
+                int numOfItems;
+                struct items itm[50];
+            };
+
+//functions to generate biils
+                void generateBillHeader(char name[50],char date[30]){
+                   // system("CLS");
+                   system("COLOR B");
+                printf("\n\n");
+                printf("\t\t\t\t\t---------------------------- The Cherry Blossom restaurent --------------------------");
+                printf("\n\n\t\t\t\t\tDate:%s",date);
+                printf("\n\t\t\t\t\tInvoice To: %s",name);
+                printf("\n\n");
+                printf("\t\t\t\t\t\t\t\t---------------------------------------\n");
+                printf("\t\t\t\t\t\t\t\tItems\t\t");
+                printf("Qty\t\t");
+                printf("Total\t\t");
+                printf("\n\t\t\t\t\t\t\t        ---------------------------------------");
+                printf("\n\n");
+                }
+                void generateBillBody
+                (
+                    char item[30],int qty, float price){
+                        //system("CLS");
+                printf(" \t\t\t\t\t\t\t\t%s\t\t",item);
+                printf(" %d\t\t",qty);
+                printf(" %.2f\t\t",qty * price);
+                printf("\n");
+                }
+
+
+
+                void generateBillFooter(float total)
+                {
+                    system("COLOR B");
+                    //system("CLS");
+                printf("\n");
+                total;
+                printf("\t\t\t\t\t\t\t\t---------------------------------------\n");
+                printf("\t\t\t\t\t\t\t\tTotal\t\t\t%.2f",total);
+                printf("\n\t\t\t\t\t\t\t\t---------------------------------------\n");
+                }
+                int opt,n;
+                struct orders ord;
+                struct orders order;
+                char saveBill = 'y',contFlag = 'y';
+                char name[50];
+                char DATE;
+                FILE *fp;
+       //dashboard
+                while(contFlag == 'y'){
+                system("CLS");
+                float total = 0;
+                int invoiceFound = 0;
+                printf("\n\n\t\t\t\t\t========================== The Cherry Blossom restaurent ==========================");
+                printf("\n\n\t\t\t\t        Please select your prefered option: ");
+                printf("\n\t\t\t\t                                           1. Save Bill");
+                printf("\n\t\t\t\t\t                                   2. Show all Bills");
+                printf("\n\t\t\t\t\t                                   3. Search One's bill");
+                printf("\n\t\t\t\t\t                                   4. Back to Main page");
+                printf("\n\t\t\t\t\t                                   5. Exit");
+
+                printf("\n\n\t\t\t\t\t\t\tYour choice:\t   ");
+                scanf("%d",&opt);
+                fgetc(stdin);
+                switch(opt){
+                case 1:
+                   // system("CLS");
+                    printf("\n\t\t\t\t   Please enter the name of the customer:  ");
+                    fgets(ord.customer,50,stdin);
+                    ord.customer[strlen(ord.customer)-1] = 0;
+                    strcpy(ord.date,_DATE_);
+                    printf("\n\t\t\t\t   Please enter the number of items:       ");
+                    scanf("%d",&n);
+                    ord.numOfItems = n;
+                    for(int i=0;i<n;i++){
+                        fgetc(stdin);
+                        printf("\n\n\n");
+                        printf("\t\t\t\t   Please enter the name of the item %d:\t   ",i+1);
+                        fgets(ord.itm[i].item,20,stdin);
+
+                        ord.itm[i].item[strlen(ord.itm[i].item)-1]=0;
+
+                        printf("\n\t\t\t\t   Please enter the quantity:\t\t   ");
+                        scanf("%d",&ord.itm[i].qty);
+
+                        printf("\n\t\t\t\t   Please enter the unit price:\t\t   ");
+                        scanf("%f",&ord.itm[i].price);
+
+
+                        total += ord.itm[i].qty * ord.itm[i].price;
+                    }
+
+                    generateBillHeader(ord.customer,ord.date);
+                    for(int i=0;i<ord.numOfItems;i++){
+                    generateBillBody(ord.itm[i].item,ord.itm[i].qty,ord.itm[i].price);
+                    }
+                    generateBillFooter(total);
+
+                    printf("\n\t\t\t\t\tDo you want to save the bill [y/n]:\t");
+                    scanf("%s",&saveBill);
+
+                    if(saveBill == 'y'){
+                    fp = fopen("RestaurantBill.dat","a+");
+                    fwrite(&ord,sizeof(struct orders),1,fp);
+                    if(fwrite != 0)
+                    printf("\n\t\t\t\t\t\t\t************Successfully saved***************");
+                    else
+                    printf("\nError saving");
+                    fclose(fp);
+                    }
+                    break;
+
+                    case 2:
+                     //   system("CLS");
+                        fp = fopen("RestaurantBill.dat","r");
+                        printf("\n\t\t\t\t\t\t\t\t  ****Your Previous all bills****\n");
+                        while(fread(&order,sizeof(struct orders),1,fp)){
+                        float tot = 0;
+                        generateBillHeader(order.customer,order.date);
+                        for(int i=0;i<order.numOfItems;i++){
+                        generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
+                        tot+=order.itm[i].qty * order.itm[i].price;
+                        }
+                        generateBillFooter(tot);
+                    }
+                    fclose(fp);
+                    break;
+
+                    case 3:
+                        printf("\n\t\t\t\t\tEnter the name of the customer:\t  ");
+        //fgetc(stdin);
+                        fgets(name,50,stdin);
+                        name[strlen(name)-1] = 0;
+                       // system("CLS");
+                        fp = fopen("RestaurantBill.dat","r");
+                        printf("\n\n\t\t\t\t\t\t\t\t****Bills of %s****",name);
+                        while(fread(&order,sizeof(struct orders),1,fp)){
+                        float tot = 0;
+                        if(!strcmp(order.customer,name)){
+                        generateBillHeader(order.customer,order.date);
+                        for(int i=0;i<order.numOfItems;i++){
+                            generateBillBody(order.itm[i].item,order.itm[i].qty,order.itm[i].price);
+                            tot+=order.itm[i].qty * order.itm[i].price;
+                        }
+                        generateBillFooter(tot);
+                        invoiceFound = 1;
+                        }
+
+                }
+                if(!invoiceFound)
+                {
+                        printf("Sorry the invoice for %s doesnot exists",name);
+                }
+                fclose(fp);
+                break;
+
+            case 4:
+                main();
+                break;
+
+            case 5:
+                printf("\n\t\t\t\t\t\t\t----------------------- Bye Bye --------------------:)\n\n");
+                exit(1);
+            default:
+                printf("\t\t\t\t\t\t\tSorry invalid option");
+                break;
+                }
+        printf("\n\t\t\t\t\tDo you want to perform another operation?[y/n]:\t");
+        scanf("%s",&contFlag);
+            }
+            printf("\n\t\t\t\t\t\t\t--------------------------- Bye Bye ----------------------:)\n\n");
+            printf("\n\n");
+        }
+        else
+        {
+            int x,y,time = 10000,choice;
+            for(x=20; x<=60; x++)
+            {
+                usleep(time);
+                gotoxy(x,30);
+                printf("*");
+                printf("    Wrong Username or Wrong Password       ");
+                fflush(stdout);
+            }
+            for(x=100; x<=150; x++)
+            {
+                usleep(time);
+                gotoxy(x,30);
+                printf("*");
+                fflush(stdout);
+            }
+            printf("\n\n                    Please select one:\n                    -----------------\n                                       1. Try again\n\n                                       2. Exit\n\n");
+            printf("                               choice: ");
+            scanf("%d", &choice);
+            system("CLS");
+
+            switch(choice)
+            {
+                case 1:login1();break;
+                case 2:exit(1);break;
+            }
+        }
+
+}
